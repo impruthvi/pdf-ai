@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^4.23.5",
     "@neondatabase/serverless": "^0.6.0",
+    "@pinecone-database/doc-splitter": "^0.0.1",
     "@pinecone-database/pinecone": "^1.0.1",
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-query": "^4.35.3",
@@ -29,8 +30,8 @@
     "langchain": "^0.0.150",
     "lucide-react": "^0.279.0",
     "next": "13.4.19",
-    "postcss": "8.4.29",
     "pdf-parse": "^1.1.1",
+    "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
