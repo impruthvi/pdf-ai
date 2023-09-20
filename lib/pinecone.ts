@@ -1,10 +1,17 @@
-import { PineconeClient } from "@pinecone-database/pinecone";
+import {
+  PineconeClient,
+  Vector,
+  utils as PineconeUtils,
+} from "@pinecone-database/pinecone";
 import { downloadFromS3 } from "./s3-server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+import md5 from "md5";
 import {
   Document,
   RecursiveCharacterTextSplitter,
 } from "@pinecone-database/doc-splitter";
+import { getEmbeddings } from "./embeddings";
+import { convertToAscii } from "./utils";
 
 let pinecone: PineconeClient | null = null;
 
@@ -42,9 +49,39 @@ export async function loadS3IntoPinecone(fileKey: string) {
   // 3. Split and segment the pdf
   const documents = await Promise.all(pages.map(prepareDocument));
 
+  // 4. Vectorize and embed individual documents
+  const vectors = await Promise.all(documents.flat().map(embedDocument));
+
+  // 5. Upload the vectors to pinecone
+  const client = await getPineconeClient();
+  const pineconeIndex = client?.Index(process.env.PINECONE_INDEX_NAME!);
+
+  console.log("Uploading vectors to pinecone");
+  const namespace = convertToAscii(fileKey);
+
+  PineconeUtils.chunkedUpsert(pineconeIndex!, vectors, namespace, 10);
+
+  return documents[0];
 }
 
+async function embedDocument(document: Document) {
+  try {
+    const embeddings = await getEmbeddings(document.pageContent);
+    const hash = md5(document.pageContent);
 
+    return {
+      id: hash,
+      values: embeddings,
+      metadata: {
+        pageNumber: document.metadata.pageNumber,
+        text: document.metadata.text,
+      },
+    } as Vector;
+  } catch (error) {
+    console.log(`Error calling openai embeddings: ${error}`);
+    throw error;
+  }
+}
 
 export const truncateStringByBytes = (str: string, bytes: number) => {
   const encoder = new TextEncoder();
