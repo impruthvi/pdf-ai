@@ -38,7 +38,7 @@ const ChatPage: React.FC<Props> = async ({ params: { chatId } }) => {
         </div>
         {/* Chat Component */}
         <div className="flex-[3] border-l-4 border-l-slate-200">
-            <ChatComponent />
+            <ChatComponent chatId={parseInt(chatId)}/>
         </div>
     </div>
   </div>;
