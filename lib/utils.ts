@@ -5,7 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function convertToAscii(str: string) {
-  // remove all non-ascii characters
-  return str.replace(/[^\x00-\x7F]/g, "");
+export function convertToAscii(inputString: string) {
+  // remove non ascii characters
+  const asciiString = inputString.replace(/[^\x00-\x7F]+/g, "");
+  return asciiString;
 }
+

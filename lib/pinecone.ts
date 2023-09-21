@@ -56,10 +56,17 @@ export async function loadS3IntoPinecone(fileKey: string) {
   const client = await getPineconeClient();
   const pineconeIndex = client?.Index(process.env.PINECONE_INDEX_NAME!);
 
-  console.log("Uploading vectors to pinecone");
-  const namespace = convertToAscii(fileKey);
+  if (!pineconeIndex) {
+    throw new Error("Pinecone index not found");
+  }
 
-  PineconeUtils.chunkedUpsert(pineconeIndex!, vectors, namespace, 10);
+  console.log("Uploading vectors to pinecone");
+
+  try {
+    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, '', 10);
+  } catch (error) {
+    console.log(`Error uploading vectors to pinecone: ${error}`);
+  }
 
   return documents[0];
 }
