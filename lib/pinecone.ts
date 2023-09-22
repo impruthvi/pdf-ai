@@ -54,7 +54,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
   // 5. Upload the vectors to pinecone
   const client = await getPineconeClient();
-  const pineconeIndex = client?.Index(process.env.PINECONE_INDEX_NAME!);
+  const pineconeIndex = client?.Index("chat-pdf");
 
   if (!pineconeIndex) {
     throw new Error("Pinecone index not found");
