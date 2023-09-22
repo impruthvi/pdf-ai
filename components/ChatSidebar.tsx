@@ -2,68 +2,61 @@
 
 import { DrizzleChat } from "@/lib/db/schema";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { MessageCircle, PlusCircleIcon } from "lucide-react";
+import Image from "next/image";
+import { Montserrat } from "next/font/google";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import axios from "axios";
-import SubscriptionButton from "./SubscriptionButton";
+import { LayoutDashboard } from "lucide-react";
 
 type Props = {
   chats: DrizzleChat[];
-  chatId: number;
-  isPro: boolean;
 };
 
-const ChatSidebar: React.FC<Props> = ({ chatId, chats, isPro }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const montserrat = Montserrat({
+  weight: "600",
+  subsets: ["latin"],
+});
 
-  const handleSubcription = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get("/api/stripe");
-      window.location.href = response.data.url;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const ChatSidebar: React.FC<Props> = ({  chats }) => {
 
+  const pathname = usePathname();
+  const routes = chats.map((chat) => ({
+    label: chat.pdfName,
+    href: `/chat/${chat.id}`,
+    icon: LayoutDashboard,
+    color: "text-sky-500",
+  }));
   return (
-    <div className="w-full h-screen p-4 text-gray-200 bg-gray-900">
-      <Link href="/">
-        <Button className="w-full border-dotted border-white border">
-          <PlusCircleIcon className="w-6 h-6 mr-2" />
-          New Chat
-        </Button>
-      </Link>
+    <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
+      <div className="px-3 py-2 flex-1">
+        <Link href="/dashboard" className="flex items-center pl-3 mb-14">
+          {/* <div className="relative w-8 h-8 mr-5">
+            <Image src="/logo.png" alt="Logo" fill />
+          </div> */}
+          <h1 className={cn("text-2xl font-bold", montserrat.className)}>
+            Chat PDF
+          </h1>
+        </Link>
 
-      <div className="flex flex-col gap-2 mt-4">
-        {chats.map((chat) => (
-          <Link href={`/chat/${chat.id}`} key={chat.id}>
-            <div
-              className={cn("rounded-lg p-3 text-slate-300 items-center", {
-                "bg-blue-800 text-white": chatId === chat.id,
-                "hover:text-white": chatId !== chat.id,
-              })}
+        <div className="space-y-1">
+          {routes.map((route) => (
+            <Link
+              href={route.href}
+              key={route.href}
+              className={cn(
+                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                pathname === route.href
+                  ? "text-white bg-white/10"
+                  : "text-zinc-400"
+              )}
             >
-              <MessageCircle className="mr-2" />
-              <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
-                {chat.pdfName}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="absolute bottom-4 left-4">
-        <div className="flex items-center gap-2 text-sm text-slate-500 flex-wrap">
-          <Link href="/">Home</Link>
-          <Link href="/">Source</Link>
-          <SubscriptionButton isPro={isPro}/>
+              <div className="flex items-center flex-1">
+                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                {route.label}
+              </div>
+            </Link>
+          ))}
         </div>
-        
       </div>
     </div>
   );
