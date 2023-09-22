@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.23.5",
+    "@clerk/nextjs": "^4.24.0",
     "@neondatabase/serverless": "^0.6.0",
     "@pinecone-database/doc-splitter": "^0.0.1",
     "@pinecone-database/pinecone": "^1.0.1",
@@ -33,7 +33,7 @@
     "langchain": "^0.0.150",
     "lucide-react": "^0.279.0",
     "md5": "^2.3.0",
-    "next": "13.4.19",
+    "next": "^13.5.3-canary.1",
     "openai-edge": "^1.2.2",
     "pdf-parse": "^1.1.1",
     "pg": "^8.11.3",
