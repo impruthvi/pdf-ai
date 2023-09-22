@@ -63,7 +63,7 @@ export async function loadS3IntoPinecone(fileKey: string) {
   console.log("Uploading vectors to pinecone");
 
   try {
-    PineconeUtils.chunkedUpsert(pineconeIndex, vectors, '', 10);
+    PineconeUtils.chunkedUpsert(pineconeIndex!, vectors, '', 10);
   } catch (error) {
     console.log(`Error uploading vectors to pinecone: ${error}`);
   }
